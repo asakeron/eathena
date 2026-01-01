@@ -289,7 +289,7 @@ AC_MSG_CHECKING([whether $CC supports -Wno-unused-parameter])
 OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -Wno-unused-parameter"
 AC_COMPILE_IFELSE(
-	[int foo;],
+	[AC_LANG_SOURCE([[int foo;]])],
 	[AC_MSG_RESULT([yes])],
 	[
 		AC_MSG_RESULT([no])
@@ -302,7 +302,7 @@ AC_MSG_CHECKING([whether $CC supports -Wno-pointer-sign])
 OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -Wno-pointer-sign"
 AC_COMPILE_IFELSE(
-	[int foo;],
+    [AC_LANG_SOURCE([[int foo;]])],
 	[
 		AC_MSG_RESULT([yes])
 		AC_MSG_CHECKING([whether $CC can actually use -Wno-pointer-sign])
@@ -310,7 +310,7 @@ AC_COMPILE_IFELSE(
 		# Note: -Werror must be before -Wno-pointer-sign, otherwise it does not do anything
 		CFLAGS="$OLD_CFLAGS -Werror -Wno-pointer-sign"
 		AC_COMPILE_IFELSE(
-			[int foo;],
+            [AC_LANG_SOURCE([[int foo;]])],
 			[
 				AC_MSG_RESULT([yes])
 				CFLAGS="$OLD_CFLAGS -Wno-pointer-sign"
@@ -332,7 +332,7 @@ AC_MSG_CHECKING([whether $CC supports -Wno-switch])
 OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -Wno-switch"
 AC_COMPILE_IFELSE(
-	[int foo;],
+	[AC_LANG_SOURCE([[int foo;]])],
 	[AC_MSG_RESULT([yes])],
 	[
 		AC_MSG_RESULT([no])
@@ -345,7 +345,7 @@ AC_MSG_CHECKING([whether $CC supports -fPIC])
 OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fPIC"
 AC_COMPILE_IFELSE(
-	[int foo;],
+	[AC_LANG_SOURCE([[int foo;]])],
 	[
 		AC_MSG_RESULT([yes])
 		compiler_supports_pic="yes"
@@ -370,14 +370,14 @@ fi
 # default
 CFLAGS="$my_shared_test_flags -shared"
 AC_LINK_IFELSE(
-	[[
+	[AC_LANG_SOURCE([[
 		int bar = 0;
 
 		int foo(void)
 		{
 			return bar;
 		}
-	]],
+	]])],
 	[
 		compiler_shared_objects="-shared"
 	]
@@ -385,14 +385,14 @@ AC_LINK_IFELSE(
 # BeOS specific
 CFLAGS="$my_shared_test_flags -nostart"
 AC_LINK_IFELSE(
-	[[
+	[AC_LANG_SOURCE([[
 		int bar = 0;
 
 		int foo(void)
 		{
 			return bar;
 		}
-	]],
+	]])],
 	[
 		compiler_shared_objects="-nostart"
 	]
@@ -416,14 +416,14 @@ OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS $SOFLAGS"
 WITH_PLUGINS="yes"
 AC_LINK_IFELSE(
-	[[
+	[AC_LANG_SOURCE([[
 		int bar = 0;
 
 		int foo(void)
 		{
 			return bar;
 		}
-	]],
+	]])],
 	[
 		AC_MSG_RESULT([no])
 		CFLAGS="$OLD_CFLAGS"
@@ -433,14 +433,14 @@ AC_LINK_IFELSE(
 			# Verify if -shared really fails due to lack of -fPIC or something else
 			CFLAGS="$CFLAGS -fPIC"
 			AC_LINK_IFELSE(
-				[[
+				[AC_LANG_SOURCE([[
 					int bar = 0;
 
 					int foo(void)
 					{
 						return bar;
 					}
-				]],
+				]])],
 				[
 					AC_MSG_RESULT([yes])
 					CFLAGS="$OLD_CFLAGS -fPIC"
@@ -470,7 +470,7 @@ AC_MSG_CHECKING([whether $CC supports -fno-strict-aliasing])
 OLD_CFLAGS="$CFLAGS"
 CFLAGS="$CFLAGS -fno-strict-aliasing"
 AC_COMPILE_IFELSE(
-	[int foo;],
+	[AC_LANG_SOURCE([[int foo;]])],
 	[AC_MSG_RESULT([yes])],
 	[
 		AC_MSG_RESULT([no])
@@ -486,21 +486,21 @@ AC_C_INLINE()
 AC_MSG_CHECKING([for all available inline directives])
 for ac_kw in inline __inline __inline__ __forceinline; do
 	AC_COMPILE_IFELSE(
-		[
+		[AC_LANG_SOURCE([[
 			typedef int foo_t;
 			static $ac_kw foo_t static_foo(void){ return 0; }
 			$ac_kw foo_t foo(void){ return 0; }
-		],
+		]])],
 		[AC_DEFINE_UNQUOTED([`echo "HAVE_$ac_kw" | $as_tr_cpp`],[1])]
 	)
 done
 for ac_kw in noinline always_inline gnu_inline; do
 	AC_COMPILE_IFELSE(
-		[
+		[AC_LANG_SOURCE([[
 			typedef int foo_t;
 			static __attribute__(($ac_kw)) foo_t static_foo(void){ return 0; }
 			__attribute__(($ac_kw)) foo_t foo(void){ return 0; }
-		],
+		]])],
 		[AC_DEFINE_UNQUOTED([`echo "HAVE_ATTRIBUTE_$ac_kw" | $as_tr_cpp`],[1])]
 	)
 done
@@ -659,7 +659,7 @@ AC_SEARCH_LIBS([clock_gettime], [rt])
 if test "$ac_cv_search_clock_gettime" != "no" ; then
 	AC_MSG_CHECKING([whether CLOCK_MONOTONIC is supported and works])
 	AC_RUN_IFELSE(
-		[
+		[AC_LANG_SOURCE([[
 			#include <sys/time.h>
 			#include <time.h>
 			#include <unistd.h>
@@ -669,7 +669,7 @@ if test "$ac_cv_search_clock_gettime" != "no" ; then
 				struct timespec tval;
 				return clock_gettime(CLOCK_MONOTONIC, &tval);
 			}
-		],
+		]])],
 		[
 			AC_MSG_RESULT([yes])
 			CFLAGS="$CFLAGS -DHAVE_MONOTONIC_CLOCK"
