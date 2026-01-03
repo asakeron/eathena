@@ -1,12 +1,11 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT
-AC_CONFIG_SRCDIR([eAthena])
+AC_PREREQ([2.72])
+AC_INIT([eathena], [1.0])
+AC_CONFIG_SRCDIR([src/common/cbasetypes.h])
 AC_CONFIG_HEADERS([src/common/config.h])
 AC_REVISION($Revision$)
-AC_PREREQ([2.72])
-AC_CONFIG_SRCDIR([src/common/cbasetypes.h])
 AC_CONFIG_FILES([Makefile src/common/Makefile])
 AC_CONFIG_FILES([3rdparty/mt19937ar/Makefile])
 AC_CONFIG_FILES([src/char/Makefile src/login/Makefile])
@@ -119,7 +118,7 @@ AC_ARG_ENABLE(
 AC_ARG_ENABLE(
 	[64bit],
 	AS_HELP_STRING([--enable-64bit],[
-			Don't force 32 bit. (disabled by default)
+			Don't force 32 bit. (enabled by default)
 			64bit support is still being tested, not recommended for production servers.
 		
 	]),
@@ -131,7 +130,7 @@ AC_ARG_ENABLE(
 			*) AC_MSG_ERROR([[invalid argument --enable-64bit=$enableval... stopping]]);;
 		esac
 	],
-	[enable_64bit="no"]
+	[enable_64bit="yes"]
 )
 
 
@@ -246,7 +245,7 @@ AC_PROG_CPP
 AC_LANG([C])
 
 
-CFLAGS="$CFLAGS -pipe -ffast-math -Wall -Wno-sign-compare"
+CFLAGS="$CFLAGS -pipe -ffast-math -Wall"
 CPPFLAGS="$CPPFLAGS -I../common"
 
 # flags used for compiling shared objects
@@ -283,63 +282,6 @@ if test "$enable_64bit" = "no" ; then
 		AC_MSG_ERROR([pointers cannot be stored in ints, required for old code... stopping])
 	fi
 fi
-
-
-AC_MSG_CHECKING([whether $CC supports -Wno-unused-parameter])
-OLD_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -Wno-unused-parameter"
-AC_COMPILE_IFELSE(
-	[AC_LANG_SOURCE([[int foo;]])],
-	[AC_MSG_RESULT([yes])],
-	[
-		AC_MSG_RESULT([no])
-		CFLAGS="$OLD_CFLAGS"
-	]
-)
-
-
-AC_MSG_CHECKING([whether $CC supports -Wno-pointer-sign])
-OLD_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -Wno-pointer-sign"
-AC_COMPILE_IFELSE(
-    [AC_LANG_SOURCE([[int foo;]])],
-	[
-		AC_MSG_RESULT([yes])
-		AC_MSG_CHECKING([whether $CC can actually use -Wno-pointer-sign])
-		# This option causes warnings in C++ mode
-		# Note: -Werror must be before -Wno-pointer-sign, otherwise it does not do anything
-		CFLAGS="$OLD_CFLAGS -Werror -Wno-pointer-sign"
-		AC_COMPILE_IFELSE(
-            [AC_LANG_SOURCE([[int foo;]])],
-			[
-				AC_MSG_RESULT([yes])
-				CFLAGS="$OLD_CFLAGS -Wno-pointer-sign"
-			],
-			[
-				AC_MSG_RESULT([no])
-				CFLAGS="$OLD_CFLAGS"
-			]
-		)
-	],
-	[
-		AC_MSG_RESULT([no])
-		CFLAGS="$OLD_CFLAGS"
-	]
-)
-
-
-AC_MSG_CHECKING([whether $CC supports -Wno-switch])
-OLD_CFLAGS="$CFLAGS"
-CFLAGS="$CFLAGS -Wno-switch"
-AC_COMPILE_IFELSE(
-	[AC_LANG_SOURCE([[int foo;]])],
-	[AC_MSG_RESULT([yes])],
-	[
-		AC_MSG_RESULT([no])
-		CFLAGS="$OLD_CFLAGS"
-	]
-)
-
 
 AC_MSG_CHECKING([whether $CC supports -fPIC])
 OLD_CFLAGS="$CFLAGS"
@@ -587,7 +529,7 @@ fi
 case $enable_debug in
 	"no")
 		# default value
-		CFLAGS="$CFLAGS -Wno-unused -Wno-parentheses"
+		CFLAGS="$CFLAGS"
 		;;
 	"yes")
 		CFLAGS="$CFLAGS -g -DDEBUG"
