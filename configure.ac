@@ -47,29 +47,6 @@ AC_ARG_ENABLE(
 	[enable_packetver=""]
 )
 
-
-#
-# debug
-#
-AC_ARG_ENABLE(
-	[debug],
-	AS_HELP_STRING([--enable-debug@<:@=ARG@:>@],[
-			Compiles extra debug code. (disabled by default)
-			(available options: yes, no, gdb)
-		
-	]),
-	[
-		enable_debug="$enableval"
-		case $enableval in
-			"no");;
-			"yes");;
-			"gdb");;
-			*) AC_MSG_ERROR([[invalid argument --enable-debug=$enableval... stopping]]);;
-		esac
-	],
-	[enable_debug="no"]
-)
-
 #
 # RDTSC as Tick Source 
 #
@@ -92,25 +69,6 @@ AC_ARG_ENABLE(
 	],
 	[enable_rdtsc=0]
 )
-
-#
-# Profiler
-#
-AC_ARG_ENABLE(
-	[profiler],
-	AS_HELP_STRING([--enable-profiler=ARG],[Profilers: no, gprof (disabled by default)
-	]),
-	[
-		enable_profiler="$enableval"
-		case $enableval in
-			"no");;
-			"gprof");;
-			*) AC_MSG_ERROR([[invalid argument --enable-profiler=$enableval... stopping]]);;
-		esac
-	],
-	[enable_profiler="no"]
-)
-
 
 #
 # 64bit
@@ -524,23 +482,6 @@ fi
 
 
 #
-# Debug
-#
-case $enable_debug in
-	"no")
-		# default value
-		CFLAGS="$CFLAGS"
-		;;
-	"yes")
-		CFLAGS="$CFLAGS -g -DDEBUG"
-		;;
-	"gdb")
-		CFLAGS="$CFLAGS -ggdb -DDEBUG"
-		;;
-esac
-
-
-#
 # RDTSC
 #
 case $enable_rdtsc in
@@ -551,21 +492,6 @@ case $enable_rdtsc in
 		CFLAGS="$CFLAGS -DENABLE_RDTSC"
 		;;
 esac
-
-
-#
-# Profiler
-#
-case $enable_profiler in
-	"no")
-		# default value
-		;;
-	"gprof")
-		CFLAGS="$CFLAGS -pg"
-		LDFLAGS="$LDFLAGS -pg"
-		;;
-esac
-
 
 #
 # zlib library (required)
